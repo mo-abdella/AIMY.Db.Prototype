@@ -24,7 +24,7 @@ builder.Services.AddDbContextFactory<MyDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")).UseSnakeCaseNamingConvention();
     //options.UseNpgsql(builder.Configuration.GetConnectionString("AWS")).UseSnakeCaseNamingConvention();
-});
+},ServiceLifetime.Scoped);
 
 
 builder.Services.AddControllers();

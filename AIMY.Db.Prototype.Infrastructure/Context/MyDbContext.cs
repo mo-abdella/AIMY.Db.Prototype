@@ -940,9 +940,6 @@ public partial class MyDbContext : DbContext
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("fk_zendesk_ticket_user_interaction");
         });
-
-        OnModelCreatingPartial(modelBuilder);
     }
 
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

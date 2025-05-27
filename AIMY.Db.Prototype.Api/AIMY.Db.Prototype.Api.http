@@ -1,0 +1,6 @@
+@AIMY.Db.Prototype.Api_HostAddress = http://localhost:5278
+
+GET {{AIMY.Db.Prototype.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

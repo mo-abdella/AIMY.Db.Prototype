@@ -60,58 +60,61 @@ public partial class MyDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<AnalysisRule>(entity =>
+        modelBuilder.Entity<AnalysisRule>(builder =>
         {
-            entity.HasKey(e => e.Id).HasName("analysis_rules_pkey");
+            builder.HasKey(e => e.Id).HasName("analysis_rules_pkey");
 
-            entity.ToTable("analysis_rules", "rule");
+            builder.ToTable("analysis_rules", "rule");
 
-            entity.HasIndex(e => e.AnalysisRuleId, "idx_analysis_rule_id");
+            builder.HasIndex(e => e.AnalysisRuleId, "idx_analysis_rule_id");
 
-            entity.HasIndex(e => e.Name, "idx_analysis_rules_name");
+            builder.HasIndex(e => e.Name, "idx_analysis_rules_name");
 
-            entity.HasIndex(e => e.ProductId, "idx_analysis_rules_product_id");
 
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.AnalysisRuleId).HasColumnName("analysis_rule_id");
-            entity.Property(e => e.CreatedAt)
+            builder.Property(e => e.Id).HasColumnName("id");
+            builder.Property(e => e.AnalysisRuleId).HasColumnName("analysis_rule_id");
+            builder.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("created_at");
-            entity.Property(e => e.CreatedBy)
+            builder.Property(e => e.CreatedBy)
                 .HasMaxLength(255)
                 .HasColumnName("created_by");
-            entity.Property(e => e.Description)
+            builder.Property(e => e.Description)
                 .HasMaxLength(5000)
                 .HasColumnName("description");
-            entity.Property(e => e.Name)
+            builder.Property(e => e.Name)
                 .HasMaxLength(255)
                 .HasColumnName("name");
-            entity.Property(e => e.ProductId).HasColumnName("product_id");
-            entity.Property(e => e.RuleInteractionType)
+            builder.Property(e => e.RuleInteractionType)
                 .HasMaxLength(50)
                 .HasColumnName("rule_interaction_type");
-            entity.Property(e => e.Type)
+            builder.Property(e => e.Type)
                 .HasMaxLength(50)
                 .HasColumnName("type");
-            entity.Property(e => e.UpdatedAt)
+            builder.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("updated_at");
-            entity.Property(e => e.UpdatedBy)
+            builder.Property(e => e.UpdatedBy)
                 .HasMaxLength(255)
                 .HasColumnName("updated_by");
-            entity.Property(e => e.Weight)
+            builder.Property(e => e.Weight)
                 .HasPrecision(4, 2)
                 .HasColumnName("weight");
 
-            entity.HasOne(d => d.AnalysisRuleNavigation).WithMany(p => p.InverseAnalysisRuleNavigation)
+            builder.HasOne(d => d.AnalysisRuleNavigation).WithMany(p => p.InverseAnalysisRuleNavigation)
                 .HasForeignKey(d => d.AnalysisRuleId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("analysis_rules_analysis_rule_id_fkey");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.AnalysisRules)
-                .HasForeignKey(d => d.ProductId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("analysis_rules_product_id_fkey");
+            //entity.Property(e => e.ProductId).HasColumnName("product_id");
+            //entity.HasIndex(e => e.ProductId, "idx_analysis_rules_product_id");
+            //entity.HasOne(d => d.Product).WithMany(p => p.AnalysisRules)
+            //    .HasForeignKey(d => d.ProductId)
+            //    .OnDelete(DeleteBehavior.ClientSetNull)
+            //    .HasConstraintName("analysis_rules_product_id_fkey");
+            builder.Ignore(e => e.ProductId);
+            builder.Ignore(e => e.Product);
+            builder.HasMany(e => e.Products).WithMany(e => e.AnalysisRules);
         });
 
         modelBuilder.Entity<ChatMessage>(entity =>
@@ -150,40 +153,40 @@ public partial class MyDbContext : DbContext
                 .HasConstraintName("chat_messages_user_interaction_id_fkey");
         });
 
-        modelBuilder.Entity<Client>(entity =>
+        modelBuilder.Entity<Client>(builder =>
         {
-            entity.HasKey(e => e.Id).HasName("clients_pkey");
+            builder.HasKey(e => e.Id).HasName("clients_pkey");
 
-            entity.ToTable("clients", "product");
+            builder.ToTable("clients", "product");
 
-            entity.HasIndex(e => new { e.Key, e.OrganizationId }, "clients_key_organization_id_key").IsUnique();
+            builder.HasIndex(e => new { e.Key, e.OrganizationId }, "clients_key_organization_id_key").IsUnique();
 
-            entity.HasIndex(e => new { e.Name, e.OrganizationId }, "clients_name_organization_id_key").IsUnique();
+            builder.HasIndex(e => new { e.Name, e.OrganizationId }, "clients_name_organization_id_key").IsUnique();
 
-            entity.HasIndex(e => e.OrganizationId, "idx_clients_organization_id");
+            builder.HasIndex(e => e.OrganizationId, "idx_clients_organization_id");
 
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt)
+            builder.Property(e => e.Id).HasColumnName("id");
+            builder.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("now()")
                 .HasColumnName("created_at");
-            entity.Property(e => e.CreatedBy)
+            builder.Property(e => e.CreatedBy)
                 .HasMaxLength(255)
                 .HasColumnName("created_by");
-            entity.Property(e => e.Key)
+            builder.Property(e => e.Key)
                 .HasMaxLength(255)
                 .HasColumnName("key");
-            entity.Property(e => e.Name)
+            builder.Property(e => e.Name)
                 .HasMaxLength(255)
                 .HasColumnName("name");
-            entity.Property(e => e.OrganizationId).HasColumnName("organization_id");
-            entity.Property(e => e.UpdatedAt)
+            builder.Property(e => e.OrganizationId).HasColumnName("organization_id");
+            builder.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("now()")
                 .HasColumnName("updated_at");
-            entity.Property(e => e.UpdatedBy)
+            builder.Property(e => e.UpdatedBy)
                 .HasMaxLength(255)
                 .HasColumnName("updated_by");
 
-            entity.HasOne(d => d.Organization).WithMany(p => p.Clients)
+            builder.HasOne(d => d.Organization).WithMany(p => p.Clients)
                 .HasForeignKey(d => d.OrganizationId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("clients_organization_id_fkey");
@@ -426,108 +429,114 @@ public partial class MyDbContext : DbContext
                 .HasConstraintName("fk_jobs_tools_tool_id");
         });
 
-        modelBuilder.Entity<Organization>(entity =>
+        modelBuilder.Entity<Organization>(builder =>
         {
-            entity.HasKey(e => e.Id).HasName("organizations_pkey");
+            builder.HasKey(e => e.Id).HasName("organizations_pkey");
 
-            entity.ToTable("organizations", "product");
+            builder.ToTable("organizations", "product");
 
-            entity.HasIndex(e => e.Key, "organizations_key_key").IsUnique();
+            builder.HasIndex(e => e.Key, "organizations_key_key").IsUnique();
 
-            entity.HasIndex(e => e.Name, "organizations_name_key").IsUnique();
+            builder.HasIndex(e => e.Name, "organizations_name_key").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt)
+            builder.Property(e => e.Id).HasColumnName("id");
+            builder.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("now()")
                 .HasColumnName("created_at");
-            entity.Property(e => e.CreatedBy)
+            builder.Property(e => e.CreatedBy)
                 .HasMaxLength(255)
                 .HasColumnName("created_by");
-            entity.Property(e => e.Key)
+            builder.Property(e => e.Key)
                 .HasMaxLength(255)
                 .HasColumnName("key");
-            entity.Property(e => e.Name)
+            builder.Property(e => e.Name)
                 .HasMaxLength(255)
                 .HasColumnName("name");
-            entity.Property(e => e.UpdatedAt)
+            builder.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("now()")
                 .HasColumnName("updated_at");
-            entity.Property(e => e.UpdatedBy)
+            builder.Property(e => e.UpdatedBy)
                 .HasMaxLength(255)
                 .HasColumnName("updated_by");
         });
 
-        modelBuilder.Entity<Product>(entity =>
+        modelBuilder.Entity<Product>(builder =>
         {
-            entity.HasKey(e => e.Id).HasName("products_pkey");
+            builder.HasKey(e => e.Id).HasName("products_pkey");
 
-            entity.ToTable("products", "product");
+            builder.ToTable("products", "product");
 
-            entity.HasIndex(e => e.ClientId, "idx_products_client_id");
+            builder.HasIndex(e => e.ClientId, "idx_products_client_id");
 
-            entity.HasIndex(e => new { e.Key, e.ClientId }, "products_key_client_id_key").IsUnique();
+            builder.HasIndex(e => new { e.Key, e.ClientId }, "products_key_client_id_key").IsUnique();
 
-            entity.HasIndex(e => new { e.Name, e.ClientId }, "products_name_client_id_key").IsUnique();
+            builder.HasIndex(e => new { e.Name, e.ClientId }, "products_name_client_id_key").IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.ClientId).HasColumnName("client_id");
-            entity.Property(e => e.CreatedAt)
+            builder.Property(e => e.Id).HasColumnName("id");
+            builder.Property(e => e.ClientId).HasColumnName("client_id");
+            builder.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("now()")
                 .HasColumnName("created_at");
-            entity.Property(e => e.CreatedBy)
+            builder.Property(e => e.CreatedBy)
                 .HasMaxLength(255)
                 .HasColumnName("created_by");
-            entity.Property(e => e.Key)
+            builder.Property(e => e.Key)
                 .HasMaxLength(255)
                 .HasColumnName("key");
-            entity.Property(e => e.Name)
+            builder.Property(e => e.Name)
                 .HasMaxLength(255)
                 .HasColumnName("name");
-            entity.Property(e => e.UpdatedAt)
+            builder.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("now()")
                 .HasColumnName("updated_at");
-            entity.Property(e => e.UpdatedBy)
+            builder.Property(e => e.UpdatedBy)
                 .HasMaxLength(255)
                 .HasColumnName("updated_by");
 
-            entity.HasOne(d => d.Client).WithMany(p => p.Products)
+            builder.HasOne(d => d.Client).WithMany(p => p.Products)
                 .HasForeignKey(d => d.ClientId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("products_client_id_fkey");
         });
 
-        modelBuilder.Entity<ProductUser>(entity =>
+        modelBuilder.Entity<ProductUser>(builder =>
         {
-            entity.HasKey(e => new { e.ProductId, e.UserId }).HasName("product_user_pkey");
+            builder.HasKey(e => new { e.OrganizationId, e.ClientId, e.ProductId, e.UserId }).HasName("product_user_pkey");
 
-            entity.ToTable("product_user", "product");
+            builder.ToTable("product_user", "product");
 
-            entity.HasIndex(e => e.UserId, "idx_product_user_user_id");
+            builder.HasIndex(e => e.UserId, "idx_product_user_user_id");
 
-            entity.Property(e => e.ProductId).HasColumnName("product_id");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
-            entity.Property(e => e.CreatedAt)
+            builder.Property(e => e.ProductId).HasColumnName("product_id");
+            builder.Property(e => e.UserId).HasColumnName("user_id");
+            builder.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("now()")
                 .HasColumnName("created_at");
-            entity.Property(e => e.CreatedBy)
+            builder.Property(e => e.CreatedBy)
                 .HasMaxLength(255)
                 .HasColumnName("created_by");
-            entity.Property(e => e.UpdatedAt)
+            builder.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("now()")
                 .HasColumnName("updated_at");
-            entity.Property(e => e.UpdatedBy)
+            builder.Property(e => e.UpdatedBy)
                 .HasMaxLength(255)
                 .HasColumnName("updated_by");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.ProductUsers)
+            builder.HasOne(d => d.Product).WithMany(p => p.ProductUsers)
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("product_user_product_id_fkey");
 
-            entity.HasOne(d => d.User).WithMany(p => p.ProductUsers)
-                .HasForeignKey(d => d.UserId)
+            builder.HasOne(d => d.Client).WithMany(p => p.ProductUsers)
+            .HasForeignKey(d => d.ClientId)
+            .OnDelete(DeleteBehavior.ClientSetNull)
+            .HasConstraintName("product_user_client_id_fkey");
+
+            builder.HasOne(d => d.Organization).WithMany(p => p.ProductUsers)
+                .HasForeignKey(d => d.OrganizationId)
+                .IsRequired()
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("product_user_user_id_fkey");
+                .HasConstraintName("product_user_organization_id_fkey");
         });
 
         modelBuilder.Entity<Role>(entity =>
@@ -656,9 +665,7 @@ public partial class MyDbContext : DbContext
 
             entity.HasIndex(e => e.AccessType, "idx_access_type");
 
-            entity.HasIndex(e => e.ProductId, "idx_tools_product_id");
 
-            entity.HasIndex(e => new { e.Name, e.ProductId }, "tools_name_product_id_key").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.AccessType)
@@ -678,7 +685,6 @@ public partial class MyDbContext : DbContext
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
                 .HasColumnName("name");
-            entity.Property(e => e.ProductId).HasColumnName("product_id");
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("now()")
                 .HasColumnType("timestamp without time zone")
@@ -690,10 +696,16 @@ public partial class MyDbContext : DbContext
                 .HasMaxLength(512)
                 .HasColumnName("url");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.Tools)
-                .HasForeignKey(d => d.ProductId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("tools_product_id_fkey");
+            //entity.HasIndex(e => new { e.Name, e.ProductId }, "tools_name_product_id_key").IsUnique();
+            //entity.HasIndex(e => e.ProductId, "idx_tools_product_id");
+            //entity.Property(e => e.ProductId).HasColumnName("product_id");
+            //entity.HasOne(d => d.Product).WithMany(p => p.Tools)
+            //    .HasForeignKey(d => d.ProductId)
+            //    .OnDelete(DeleteBehavior.ClientSetNull)
+            //    .HasConstraintName("tools_product_id_fkey");
+            entity.Ignore(e => e.ProductId);
+            entity.Ignore(e => e.Product);
+            entity.HasMany(d => d.Products).WithMany(p => p.Tools);
         });
 
         modelBuilder.Entity<User>(entity =>

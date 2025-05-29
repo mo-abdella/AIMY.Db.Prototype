@@ -17,4 +17,6 @@ public partial class Organization
     public string Key { get; set; } = null!;
 
     public virtual ICollection<Client> Clients { get; set; } = new List<Client>();
+    public virtual ICollection<ProductUser>? ProductUsers { get; set; } = new List<ProductUser>();
+
 }

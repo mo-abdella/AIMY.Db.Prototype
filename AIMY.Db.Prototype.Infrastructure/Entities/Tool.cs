@@ -27,6 +27,7 @@ public partial class Tool
     public virtual ICollection<Job> Jobs { get; set; } = new List<Job>();
 
     public virtual Product Product { get; set; } = null!;
+    public virtual List<Product> Products { get; set; }
 
     public virtual ICollection<UserInteraction> UserInteractions { get; set; } = new List<UserInteraction>();
 }

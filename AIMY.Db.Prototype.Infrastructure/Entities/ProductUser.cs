@@ -12,9 +12,13 @@ public partial class ProductUser
 
     public int UserId { get; set; }
 
-    public int ProductId { get; set; }
 
-    public virtual Product Product { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
+    public int? ProductId { get; set; }
+    public virtual Product? Product { get; set; } = null!;
+    public virtual int? ClientId { get; set; } = null!;
+    public virtual Client? Client { get; set; } = null!;
+    public virtual int OrganizationId { get; set; }
+    public virtual required Organization Organization { get; set; }
 }

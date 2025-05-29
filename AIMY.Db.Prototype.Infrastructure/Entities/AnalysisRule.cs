@@ -1,4 +1,6 @@
-﻿namespace AIMY.Db.Prototype.Infrastructure.Entities;
+﻿using AIMY.Db.Prototype.Infrastructure.Shared.Enums;
+
+namespace AIMY.Db.Prototype.Infrastructure.Entities;
 
 public partial class AnalysisRule
 {
@@ -20,7 +22,8 @@ public partial class AnalysisRule
 
     public string? Type { get; set; }
 
-    public int ProductId { get; set; }
+    public InteractionTypeEnum? InteractionType { get; set; }
+
 
     public int? AnalysisRuleId { get; set; }
 
@@ -34,5 +37,7 @@ public partial class AnalysisRule
 
     public virtual ICollection<AnalysisRule> InverseAnalysisRuleNavigation { get; set; } = new List<AnalysisRule>();
 
+    public int ProductId { get; set; }
     public virtual Product Product { get; set; } = null!;
+    public virtual List<Product> Products { get; set; } = null!;
 }

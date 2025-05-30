@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AIMY.Db.Prototype.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -90,6 +90,29 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "tools",
+                schema: "product",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "now()"),
+                    updated_at = table.Column<DateTime>(type: "timestamp without time zone", nullable: true, defaultValueSql: "now()"),
+                    created_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    updated_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    url = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
+                    api_key = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
+                    api_secret = table.Column<byte[]>(type: "bytea", nullable: true),
+                    product_id = table.Column<int>(type: "integer", nullable: false),
+                    access_type = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false, defaultValueSql: "'api'::character varying")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("tools_pkey", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "users",
                 schema: "auth",
                 columns: table => new
@@ -137,6 +160,55 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                         column: x => x.organization_id,
                         principalSchema: "product",
                         principalTable: "organizations",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "user_interactions",
+                schema: "interaction",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
+                    created_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "now()"),
+                    updated_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    agent_email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    agent_id = table.Column<int>(type: "integer", nullable: true),
+                    status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    text_content = table.Column<string>(type: "text", nullable: true),
+                    call_duration = table.Column<int>(type: "integer", nullable: true),
+                    call_direction = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    call_hold_duration = table.Column<int>(type: "integer", nullable: true),
+                    ticket_number = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    ticket_description = table.Column<string>(type: "text", nullable: true),
+                    ticket_title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    interaction_type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    tool_id = table.Column<int>(type: "integer", nullable: false),
+                    sentiment_analysis_score_ai = table.Column<decimal>(type: "numeric(4,2)", precision: 4, scale: 2, nullable: true),
+                    sentiment_analysis_score_qa = table.Column<decimal>(type: "numeric(4,2)", precision: 4, scale: 2, nullable: true),
+                    mistake_analysis_score_ai = table.Column<decimal>(type: "numeric(4,2)", precision: 4, scale: 2, nullable: true),
+                    mistake_analysis_score_qa = table.Column<decimal>(type: "numeric(4,2)", precision: 4, scale: 2, nullable: true),
+                    semantic_analysis_ai = table.Column<string>(type: "character varying(5000)", maxLength: 5000, nullable: true),
+                    semantic_analysis_qa = table.Column<string>(type: "character varying(5000)", maxLength: 5000, nullable: true),
+                    ticket_group = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true, defaultValueSql: "''::character varying"),
+                    ticket_tags = table.Column<List<string>>(type: "text[]", nullable: true),
+                    ticket_type_name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true, defaultValueSql: "''::character varying"),
+                    first_response_time_taken = table.Column<long>(type: "bigint", nullable: true),
+                    external_date_created = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    external_date_closed = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    external_status = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true, defaultValueSql: "''::character varying"),
+                    external_id = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("user_interactions_pkey", x => x.id);
+                    table.ForeignKey(
+                        name: "user_interactions_tool_id_fkey",
+                        column: x => x.tool_id,
+                        principalSchema: "product",
+                        principalTable: "tools",
                         principalColumn: "id");
                 });
 
@@ -196,213 +268,6 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "analysis_rules",
-                schema: "rule",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    created_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    updated_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    description = table.Column<string>(type: "character varying(5000)", maxLength: 5000, nullable: true),
-                    weight = table.Column<decimal>(type: "numeric(4,2)", precision: 4, scale: 2, nullable: true),
-                    type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    product_id = table.Column<int>(type: "integer", nullable: false),
-                    analysis_rule_id = table.Column<int>(type: "integer", nullable: true),
-                    rule_interaction_type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("analysis_rules_pkey", x => x.id);
-                    table.ForeignKey(
-                        name: "analysis_rules_analysis_rule_id_fkey",
-                        column: x => x.analysis_rule_id,
-                        principalSchema: "rule",
-                        principalTable: "analysis_rules",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "analysis_rules_product_id_fkey",
-                        column: x => x.product_id,
-                        principalSchema: "product",
-                        principalTable: "products",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "product_user",
-                schema: "product",
-                columns: table => new
-                {
-                    user_id = table.Column<int>(type: "integer", nullable: false),
-                    product_id = table.Column<int>(type: "integer", nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "now()"),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "now()"),
-                    created_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    updated_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("product_user_pkey", x => new { x.product_id, x.user_id });
-                    table.ForeignKey(
-                        name: "product_user_product_id_fkey",
-                        column: x => x.product_id,
-                        principalSchema: "product",
-                        principalTable: "products",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "product_user_user_id_fkey",
-                        column: x => x.user_id,
-                        principalSchema: "auth",
-                        principalTable: "users",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "tools",
-                schema: "product",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "now()"),
-                    updated_at = table.Column<DateTime>(type: "timestamp without time zone", nullable: true, defaultValueSql: "now()"),
-                    created_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    updated_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    url = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
-                    api_key = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
-                    api_secret = table.Column<byte[]>(type: "bytea", nullable: true),
-                    product_id = table.Column<int>(type: "integer", nullable: false),
-                    access_type = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false, defaultValueSql: "'api'::character varying")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("tools_pkey", x => x.id);
-                    table.ForeignKey(
-                        name: "tools_product_id_fkey",
-                        column: x => x.product_id,
-                        principalSchema: "product",
-                        principalTable: "products",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "expected_outputs",
-                schema: "rule",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    created_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    updated_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    description = table.Column<string>(type: "character varying(5000)", maxLength: 5000, nullable: true),
-                    output_type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    analysis_rule_id = table.Column<int>(type: "integer", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("expected_outputs_pkey", x => x.id);
-                    table.ForeignKey(
-                        name: "expected_outputs_analysis_rule_id_fkey",
-                        column: x => x.analysis_rule_id,
-                        principalSchema: "rule",
-                        principalTable: "analysis_rules",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "jobs",
-                schema: "job",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    last_run_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
-                    result_message = table.Column<string>(type: "text", nullable: true),
-                    tool_id = table.Column<int>(type: "integer", nullable: true),
-                    product_id = table.Column<int>(type: "integer", nullable: true),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
-                    created_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    updated_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_jobs", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_jobs_products_product_id",
-                        column: x => x.product_id,
-                        principalSchema: "product",
-                        principalTable: "products",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "fk_jobs_tools_tool_id",
-                        column: x => x.tool_id,
-                        principalSchema: "product",
-                        principalTable: "tools",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "user_interactions",
-                schema: "interaction",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
-                    created_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "now()"),
-                    updated_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    agent_email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    agent_id = table.Column<int>(type: "integer", nullable: true),
-                    status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    text_content = table.Column<string>(type: "text", nullable: true),
-                    call_duration = table.Column<int>(type: "integer", nullable: true),
-                    call_direction = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    call_hold_duration = table.Column<int>(type: "integer", nullable: true),
-                    ticket_number = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    ticket_description = table.Column<string>(type: "text", nullable: true),
-                    ticket_title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    interaction_type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    tool_id = table.Column<int>(type: "integer", nullable: false),
-                    sentiment_analysis_score_ai = table.Column<decimal>(type: "numeric(4,2)", precision: 4, scale: 2, nullable: true),
-                    sentiment_analysis_score_qa = table.Column<decimal>(type: "numeric(4,2)", precision: 4, scale: 2, nullable: true),
-                    mistake_analysis_score_ai = table.Column<decimal>(type: "numeric(4,2)", precision: 4, scale: 2, nullable: true),
-                    mistake_analysis_score_qa = table.Column<decimal>(type: "numeric(4,2)", precision: 4, scale: 2, nullable: true),
-                    semantic_analysis_ai = table.Column<string>(type: "character varying(5000)", maxLength: 5000, nullable: true),
-                    semantic_analysis_qa = table.Column<string>(type: "character varying(5000)", maxLength: 5000, nullable: true),
-                    ticket_group = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true, defaultValueSql: "''::character varying"),
-                    ticket_tags = table.Column<List<string>>(type: "text[]", nullable: true),
-                    ticket_type_name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true, defaultValueSql: "''::character varying"),
-                    first_response_time_taken = table.Column<long>(type: "bigint", nullable: true),
-                    external_date_created = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    external_date_closed = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    external_status = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true, defaultValueSql: "''::character varying"),
-                    external_id = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("user_interactions_pkey", x => x.id);
-                    table.ForeignKey(
-                        name: "user_interactions_tool_id_fkey",
-                        column: x => x.tool_id,
-                        principalSchema: "product",
-                        principalTable: "tools",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "chat_messages",
                 schema: "interaction",
                 columns: table => new
@@ -423,75 +288,6 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                     table.PrimaryKey("chat_messages_pkey", x => x.id);
                     table.ForeignKey(
                         name: "chat_messages_user_interaction_id_fkey",
-                        column: x => x.user_interaction_id,
-                        principalSchema: "interaction",
-                        principalTable: "user_interactions",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "interaction_analysis_rule_results",
-                schema: "rule",
-                columns: table => new
-                {
-                    user_interaction_id = table.Column<int>(type: "integer", nullable: false),
-                    analysis_rule_id = table.Column<int>(type: "integer", nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    created_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    updated_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    score = table.Column<decimal>(type: "numeric(10,2)", precision: 10, scale: 2, nullable: true),
-                    comment = table.Column<string>(type: "text", nullable: true),
-                    qa_score = table.Column<decimal>(type: "numeric(10,2)", precision: 10, scale: 2, nullable: true),
-                    qa_review = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    reason = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("interaction_analysis_rule_results_pkey", x => new { x.user_interaction_id, x.analysis_rule_id });
-                    table.ForeignKey(
-                        name: "interaction_analysis_rule_results_analysis_rule_id_fkey",
-                        column: x => x.analysis_rule_id,
-                        principalSchema: "rule",
-                        principalTable: "analysis_rules",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "interaction_analysis_rule_results_user_interaction_id_fkey",
-                        column: x => x.user_interaction_id,
-                        principalSchema: "interaction",
-                        principalTable: "user_interactions",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "interaction_expected_output_results",
-                schema: "rule",
-                columns: table => new
-                {
-                    user_interaction_id = table.Column<int>(type: "integer", nullable: false),
-                    expected_output_id = table.Column<int>(type: "integer", nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    created_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    updated_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    ai_or_qa = table.Column<bool>(type: "boolean", nullable: true),
-                    output_type = table.Column<string>(type: "character(10)", fixedLength: true, maxLength: 10, nullable: false),
-                    text_output = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    number_output = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: true),
-                    boolean_output = table.Column<bool>(type: "boolean", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_interaction_expected_output_results", x => new { x.user_interaction_id, x.expected_output_id });
-                    table.ForeignKey(
-                        name: "interaction_expected_output_results_expected_output_id_fkey",
-                        column: x => x.expected_output_id,
-                        principalSchema: "rule",
-                        principalTable: "expected_outputs",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "interaction_expected_output_results_user_interaction_id_fkey",
                         column: x => x.user_interaction_id,
                         principalSchema: "interaction",
                         principalTable: "user_interactions",
@@ -665,103 +461,385 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                         onDelete: ReferentialAction.SetNull);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "analysis_rules",
+                schema: "rule",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    created_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    updated_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    description = table.Column<string>(type: "character varying(5000)", maxLength: 5000, nullable: true),
+                    weight = table.Column<decimal>(type: "numeric(4,2)", precision: 4, scale: 2, nullable: true),
+                    type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    product_id = table.Column<int>(type: "integer", nullable: false),
+                    analysis_rule_id = table.Column<int>(type: "integer", nullable: true),
+                    rule_interaction_type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("analysis_rules_pkey", x => x.id);
+                    table.ForeignKey(
+                        name: "analysis_rules_analysis_rule_id_fkey",
+                        column: x => x.analysis_rule_id,
+                        principalSchema: "rule",
+                        principalTable: "analysis_rules",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_analysis_rules_products_product_id",
+                        column: x => x.product_id,
+                        principalSchema: "product",
+                        principalTable: "products",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "jobs",
+                schema: "job",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    last_run_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    status = table.Column<int>(type: "integer", nullable: false),
+                    result_message = table.Column<string>(type: "text", nullable: true),
+                    tool_id = table.Column<int>(type: "integer", nullable: true),
+                    product_id = table.Column<int>(type: "integer", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
+                    created_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    updated_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_jobs", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_jobs_products_product_id",
+                        column: x => x.product_id,
+                        principalSchema: "product",
+                        principalTable: "products",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "fk_jobs_tools_tool_id",
+                        column: x => x.tool_id,
+                        principalSchema: "product",
+                        principalTable: "tools",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "product_tool",
+                schema: "product",
+                columns: table => new
+                {
+                    product_id = table.Column<int>(type: "integer", nullable: false),
+                    tool_id = table.Column<int>(type: "integer", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    created_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    updated_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_product_tool", x => new { x.product_id, x.tool_id });
+                    table.ForeignKey(
+                        name: "fk_product_tool_products_product_id",
+                        column: x => x.product_id,
+                        principalSchema: "product",
+                        principalTable: "products",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_product_tool_tools_tool_id",
+                        column: x => x.tool_id,
+                        principalSchema: "product",
+                        principalTable: "tools",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "product_user",
+                schema: "product",
+                columns: table => new
+                {
+                    user_id = table.Column<int>(type: "integer", nullable: false),
+                    product_id = table.Column<int>(type: "integer", nullable: false),
+                    client_id = table.Column<int>(type: "integer", nullable: false),
+                    organization_id = table.Column<int>(type: "integer", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "now()"),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "now()"),
+                    created_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    updated_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("product_user_pkey", x => new { x.organization_id, x.client_id, x.product_id, x.user_id });
+                    table.ForeignKey(
+                        name: "fk_product_user_clients_client_id",
+                        column: x => x.client_id,
+                        principalSchema: "product",
+                        principalTable: "clients",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "fk_product_user_organizations_organization_id",
+                        column: x => x.organization_id,
+                        principalSchema: "product",
+                        principalTable: "organizations",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "product_user_product_id_fkey",
+                        column: x => x.product_id,
+                        principalSchema: "product",
+                        principalTable: "products",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "product_user_user_id_fkey",
+                        column: x => x.user_id,
+                        principalSchema: "auth",
+                        principalTable: "users",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "analysis_rule_product",
+                schema: "rule",
+                columns: table => new
+                {
+                    analysis_rule_id = table.Column<int>(type: "integer", nullable: false),
+                    product_id = table.Column<int>(type: "integer", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    created_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    updated_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_analysis_rule_product", x => new { x.analysis_rule_id, x.product_id });
+                    table.ForeignKey(
+                        name: "fk_analysis_rule_product_analysis_rules_analysis_rule_id",
+                        column: x => x.analysis_rule_id,
+                        principalSchema: "rule",
+                        principalTable: "analysis_rules",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_analysis_rule_product_products_product_id",
+                        column: x => x.product_id,
+                        principalSchema: "product",
+                        principalTable: "products",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "expected_outputs",
+                schema: "rule",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    created_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    updated_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    description = table.Column<string>(type: "character varying(5000)", maxLength: 5000, nullable: true),
+                    output_type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    analysis_rule_id = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("expected_outputs_pkey", x => x.id);
+                    table.ForeignKey(
+                        name: "expected_outputs_analysis_rule_id_fkey",
+                        column: x => x.analysis_rule_id,
+                        principalSchema: "rule",
+                        principalTable: "analysis_rules",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "interaction_analysis_rule_results",
+                schema: "rule",
+                columns: table => new
+                {
+                    user_interaction_id = table.Column<int>(type: "integer", nullable: false),
+                    analysis_rule_id = table.Column<int>(type: "integer", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    created_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    updated_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    score = table.Column<decimal>(type: "numeric(10,2)", precision: 10, scale: 2, nullable: true),
+                    comment = table.Column<string>(type: "text", nullable: true),
+                    qa_score = table.Column<decimal>(type: "numeric(10,2)", precision: 10, scale: 2, nullable: true),
+                    qa_review = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    reason = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("interaction_analysis_rule_results_pkey", x => new { x.user_interaction_id, x.analysis_rule_id });
+                    table.ForeignKey(
+                        name: "interaction_analysis_rule_results_analysis_rule_id_fkey",
+                        column: x => x.analysis_rule_id,
+                        principalSchema: "rule",
+                        principalTable: "analysis_rules",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "interaction_analysis_rule_results_user_interaction_id_fkey",
+                        column: x => x.user_interaction_id,
+                        principalSchema: "interaction",
+                        principalTable: "user_interactions",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "interaction_expected_output_results",
+                schema: "rule",
+                columns: table => new
+                {
+                    user_interaction_id = table.Column<int>(type: "integer", nullable: false),
+                    expected_output_id = table.Column<int>(type: "integer", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    created_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    updated_by = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    ai_or_qa = table.Column<bool>(type: "boolean", nullable: true),
+                    output_type = table.Column<string>(type: "character(10)", fixedLength: true, maxLength: 10, nullable: false),
+                    text_output = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    number_output = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: true),
+                    boolean_output = table.Column<bool>(type: "boolean", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_interaction_expected_output_results", x => new { x.user_interaction_id, x.expected_output_id });
+                    table.ForeignKey(
+                        name: "interaction_expected_output_results_expected_output_id_fkey",
+                        column: x => x.expected_output_id,
+                        principalSchema: "rule",
+                        principalTable: "expected_outputs",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "interaction_expected_output_results_user_interaction_id_fkey",
+                        column: x => x.user_interaction_id,
+                        principalSchema: "interaction",
+                        principalTable: "user_interactions",
+                        principalColumn: "id");
+                });
+
             migrationBuilder.CreateIndex(
-                name: "ix_analysis_rules_analysis_rule_id",
+                name: "idx_analysis_rule_product_product_id",
+                schema: "rule",
+                table: "analysis_rule_product",
+                column: "product_id");
+
+            migrationBuilder.CreateIndex(
+                name: "idx_analysis_rule_id",
                 schema: "rule",
                 table: "analysis_rules",
                 column: "analysis_rule_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_analysis_rules_name",
+                name: "idx_analysis_rules_name",
                 schema: "rule",
                 table: "analysis_rules",
                 column: "name");
 
             migrationBuilder.CreateIndex(
-                name: "ix_analysis_rules_product_id",
+                name: "idx_analysis_rules_product_id",
                 schema: "rule",
                 table: "analysis_rules",
                 column: "product_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_chat_messages_user_interaction_id",
+                name: "idx_messages_user_interaction_id",
                 schema: "interaction",
                 table: "chat_messages",
                 column: "user_interaction_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_clients_key_organization_id",
+                name: "clients_key_organization_id_key",
                 schema: "product",
                 table: "clients",
                 columns: new[] { "key", "organization_id" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_clients_name_organization_id",
+                name: "clients_name_organization_id_key",
                 schema: "product",
                 table: "clients",
                 columns: new[] { "name", "organization_id" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_clients_organization_id",
+                name: "idx_clients_organization_id",
                 schema: "product",
                 table: "clients",
                 column: "organization_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_expected_outputs_analysis_rule_id",
+                name: "idx_expected_outputs_analysis_rule_id",
                 schema: "rule",
                 table: "expected_outputs",
                 column: "analysis_rule_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_expected_outputs_name",
+                name: "idx_expected_outputs_name",
                 schema: "rule",
                 table: "expected_outputs",
                 column: "name");
 
             migrationBuilder.CreateIndex(
-                name: "ix_flyway_schema_history_success",
+                name: "flyway_schema_history_s_idx",
                 schema: "events",
                 table: "flyway_schema_history",
                 column: "success");
 
             migrationBuilder.CreateIndex(
-                name: "ix_interaction_analysis_rule_results_analysis_rule_id",
+                name: "idx_interaction_analysis_rule_results_analysis_rule_id",
                 schema: "rule",
                 table: "interaction_analysis_rule_results",
                 column: "analysis_rule_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_interaction_analysis_rule_results_type",
+                name: "idx_interaction_analysis_rule_results_type",
                 schema: "rule",
                 table: "interaction_analysis_rule_results",
                 column: "type");
 
             migrationBuilder.CreateIndex(
-                name: "ix_interaction_analysis_rule_results_user_interaction_id",
+                name: "idx_interaction_analysis_rule_results_user_interaction_id",
                 schema: "rule",
                 table: "interaction_analysis_rule_results",
                 column: "user_interaction_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_interaction_expected_output_results_expected_output_id",
+                name: "idx_interaction_expected_output_results_composite",
                 schema: "rule",
                 table: "interaction_expected_output_results",
-                column: "expected_output_id");
+                columns: new[] { "user_interaction_id", "expected_output_id" });
 
             migrationBuilder.CreateIndex(
-                name: "ix_interaction_expected_output_results_output_type",
+                name: "idx_interaction_expected_output_results_type",
                 schema: "rule",
                 table: "interaction_expected_output_results",
                 column: "output_type");
 
             migrationBuilder.CreateIndex(
-                name: "ix_interaction_expected_output_results_user_interaction_id_exp",
+                name: "IX_interaction_expected_output_results_expected_output_id",
                 schema: "rule",
                 table: "interaction_expected_output_results",
-                columns: new[] { "user_interaction_id", "expected_output_id" });
+                column: "expected_output_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_jobs_product_id",
@@ -776,134 +854,158 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                 column: "tool_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_organizations_key",
+                name: "organizations_key_key",
                 schema: "product",
                 table: "organizations",
                 column: "key",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_organizations_name",
+                name: "organizations_name_key",
                 schema: "product",
                 table: "organizations",
                 column: "name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_product_user_user_id",
+                name: "idx_product_tool_tool_id",
+                schema: "product",
+                table: "product_tool",
+                column: "tool_id");
+
+            migrationBuilder.CreateIndex(
+                name: "idx_product_user_client_id",
+                schema: "product",
+                table: "product_user",
+                column: "client_id");
+
+            migrationBuilder.CreateIndex(
+                name: "idx_product_user_organization_id",
+                schema: "product",
+                table: "product_user",
+                column: "organization_id");
+
+            migrationBuilder.CreateIndex(
+                name: "idx_product_user_user_id",
                 schema: "product",
                 table: "product_user",
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_products_client_id",
+                name: "IX_product_user_product_id",
+                schema: "product",
+                table: "product_user",
+                column: "product_id");
+
+            migrationBuilder.CreateIndex(
+                name: "idx_products_client_id",
                 schema: "product",
                 table: "products",
                 column: "client_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_products_key_client_id",
+                name: "products_key_client_id_key",
                 schema: "product",
                 table: "products",
                 columns: new[] { "key", "client_id" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_products_name_client_id",
+                name: "products_name_client_id_key",
                 schema: "product",
                 table: "products",
                 columns: new[] { "name", "client_id" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_roles_name",
+                name: "roles_name_key",
                 schema: "auth",
                 table: "roles",
                 column: "name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_ticket_actions_user_interaction_id",
+                name: "idx_actions_user_interaction_id",
                 schema: "interaction",
                 table: "ticket_actions",
                 column: "user_interaction_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_ticket_history_user_interaction_id",
+                name: "IX_ticket_history_user_interaction_id",
                 schema: "interaction",
                 table: "ticket_history",
                 column: "user_interaction_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_tools_access_type",
+                name: "idx_access_type",
                 schema: "product",
                 table: "tools",
                 column: "access_type");
 
             migrationBuilder.CreateIndex(
-                name: "ix_tools_name_product_id",
+                name: "idx_tools_product_id",
+                schema: "product",
+                table: "tools",
+                column: "product_id");
+
+            migrationBuilder.CreateIndex(
+                name: "tools_name_product_id_key",
                 schema: "product",
                 table: "tools",
                 columns: new[] { "name", "product_id" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_tools_product_id",
-                schema: "product",
-                table: "tools",
-                column: "product_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_user_interaction_events_user_interaction_id",
+                name: "idx_user_interaction_events_interaction_id",
                 schema: "events",
                 table: "user_interaction_events",
                 column: "user_interaction_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_interactions_agent_id",
+                name: "idx_agent_id",
                 schema: "interaction",
                 table: "user_interactions",
                 column: "agent_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_interactions_interaction_type",
+                name: "idx_interaction_type",
                 schema: "interaction",
                 table: "user_interactions",
                 column: "interaction_type");
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_interactions_tool_id",
+                name: "idx_tool_id",
                 schema: "interaction",
                 table: "user_interactions",
                 column: "tool_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_role_role_id",
+                name: "IX_user_role_role_id",
                 schema: "auth",
                 table: "user_role",
                 column: "role_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_users_email",
+                name: "idx_users_email",
                 schema: "auth",
                 table: "users",
                 column: "email");
 
             migrationBuilder.CreateIndex(
-                name: "ix_users_email1",
+                name: "idx_users_supervisor_id",
+                schema: "auth",
+                table: "users",
+                column: "supervisor_id");
+
+            migrationBuilder.CreateIndex(
+                name: "users_email_key",
                 schema: "auth",
                 table: "users",
                 column: "email",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_users_supervisor_id",
-                schema: "auth",
-                table: "users",
-                column: "supervisor_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_zendesk_tickets_user_interaction_id",
+                name: "IX_zendesk_tickets_user_interaction_id",
                 schema: "interaction",
                 table: "zendesk_tickets",
                 column: "user_interaction_id");
@@ -912,6 +1014,10 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "analysis_rule_product",
+                schema: "rule");
+
             migrationBuilder.DropTable(
                 name: "chat_messages",
                 schema: "interaction");
@@ -935,6 +1041,10 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
             migrationBuilder.DropTable(
                 name: "jobs",
                 schema: "job");
+
+            migrationBuilder.DropTable(
+                name: "product_tool",
+                schema: "product");
 
             migrationBuilder.DropTable(
                 name: "product_user",

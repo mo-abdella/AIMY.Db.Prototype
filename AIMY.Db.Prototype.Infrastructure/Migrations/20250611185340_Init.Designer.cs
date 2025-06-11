@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AIMY.Db.Prototype.Infrastructure.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20250530133332_init")]
-    partial class init
+    [Migration("20250611185340_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -94,11 +94,14 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("analysis_rules_pkey");
 
-                    b.HasIndex(new[] { "AnalysisRuleId" }, "idx_analysis_rule_id");
+                    b.HasIndex(new[] { "AnalysisRuleId" }, "idx_analysis_rule_id")
+                        .HasDatabaseName("ix_analysis_rules_analysis_rule_id");
 
-                    b.HasIndex(new[] { "Name" }, "idx_analysis_rules_name");
+                    b.HasIndex(new[] { "Name" }, "idx_analysis_rules_name")
+                        .HasDatabaseName("ix_analysis_rules_name");
 
-                    b.HasIndex(new[] { "ProductId" }, "idx_analysis_rules_product_id");
+                    b.HasIndex(new[] { "ProductId" }, "idx_analysis_rules_product_id")
+                        .HasDatabaseName("ix_analysis_rules_product_id");
 
                     b.ToTable("analysis_rules", "rule");
                 });
@@ -136,9 +139,10 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                         .HasColumnName("updated_by");
 
                     b.HasKey("AnalysisRuleId", "ProductId")
-                        .HasName("pk_analysis_rule_product");
+                        .HasName("analysis_rule_product_pkey");
 
-                    b.HasIndex(new[] { "ProductId" }, "idx_analysis_rule_product_product_id");
+                    b.HasIndex(new[] { "ProductId" }, "idx_analysis_rule_product_product_id")
+                        .HasDatabaseName("ix_analysis_rule_product_product_id");
 
                     b.ToTable("analysis_rule_product", "rule");
                 });
@@ -195,7 +199,8 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("chat_messages_pkey");
 
-                    b.HasIndex(new[] { "UserInteractionId" }, "idx_messages_user_interaction_id");
+                    b.HasIndex(new[] { "UserInteractionId" }, "idx_messages_user_interaction_id")
+                        .HasDatabaseName("ix_chat_messages_user_interaction_id");
 
                     b.ToTable("chat_messages", "interaction");
                 });
@@ -251,12 +256,15 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                         .HasName("clients_pkey");
 
                     b.HasIndex(new[] { "Key", "OrganizationId" }, "clients_key_organization_id_key")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_clients_key_organization_id");
 
                     b.HasIndex(new[] { "Name", "OrganizationId" }, "clients_name_organization_id_key")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_clients_name_organization_id");
 
-                    b.HasIndex(new[] { "OrganizationId" }, "idx_clients_organization_id");
+                    b.HasIndex(new[] { "OrganizationId" }, "idx_clients_organization_id")
+                        .HasDatabaseName("ix_clients_organization_id");
 
                     b.ToTable("clients", "product");
                 });
@@ -315,9 +323,11 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("expected_outputs_pkey");
 
-                    b.HasIndex(new[] { "AnalysisRuleId" }, "idx_expected_outputs_analysis_rule_id");
+                    b.HasIndex(new[] { "AnalysisRuleId" }, "idx_expected_outputs_analysis_rule_id")
+                        .HasDatabaseName("ix_expected_outputs_analysis_rule_id");
 
-                    b.HasIndex(new[] { "Name" }, "idx_expected_outputs_name");
+                    b.HasIndex(new[] { "Name" }, "idx_expected_outputs_name")
+                        .HasDatabaseName("ix_expected_outputs_name");
 
                     b.ToTable("expected_outputs", "rule");
                 });
@@ -378,7 +388,8 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                     b.HasKey("InstalledRank")
                         .HasName("flyway_schema_history_pk");
 
-                    b.HasIndex(new[] { "Success" }, "flyway_schema_history_s_idx");
+                    b.HasIndex(new[] { "Success" }, "flyway_schema_history_s_idx")
+                        .HasDatabaseName("ix_flyway_schema_history_success");
 
                     b.ToTable("flyway_schema_history", "events");
                 });
@@ -448,11 +459,14 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                     b.HasKey("UserInteractionId", "AnalysisRuleId")
                         .HasName("interaction_analysis_rule_results_pkey");
 
-                    b.HasIndex(new[] { "AnalysisRuleId" }, "idx_interaction_analysis_rule_results_analysis_rule_id");
+                    b.HasIndex(new[] { "AnalysisRuleId" }, "idx_interaction_analysis_rule_results_analysis_rule_id")
+                        .HasDatabaseName("ix_interaction_analysis_rule_results_analysis_rule_id");
 
-                    b.HasIndex(new[] { "Type" }, "idx_interaction_analysis_rule_results_type");
+                    b.HasIndex(new[] { "Type" }, "idx_interaction_analysis_rule_results_type")
+                        .HasDatabaseName("ix_interaction_analysis_rule_results_type");
 
-                    b.HasIndex(new[] { "UserInteractionId" }, "idx_interaction_analysis_rule_results_user_interaction_id");
+                    b.HasIndex(new[] { "UserInteractionId" }, "idx_interaction_analysis_rule_results_user_interaction_id")
+                        .HasDatabaseName("ix_interaction_analysis_rule_results_user_interaction_id");
 
                     b.ToTable("interaction_analysis_rule_results", "rule");
                 });
@@ -519,11 +533,14 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                     b.HasKey("UserInteractionId", "ExpectedOutputId")
                         .HasName("pk_interaction_expected_output_results");
 
-                    b.HasIndex("ExpectedOutputId");
+                    b.HasIndex("ExpectedOutputId")
+                        .HasDatabaseName("ix_interaction_expected_output_results_expected_output_id");
 
-                    b.HasIndex(new[] { "UserInteractionId", "ExpectedOutputId" }, "idx_interaction_expected_output_results_composite");
+                    b.HasIndex(new[] { "UserInteractionId", "ExpectedOutputId" }, "idx_interaction_expected_output_results_composite")
+                        .HasDatabaseName("ix_interaction_expected_output_results_user_interaction_id_exp");
 
-                    b.HasIndex(new[] { "OutputType" }, "idx_interaction_expected_output_results_type");
+                    b.HasIndex(new[] { "OutputType" }, "idx_interaction_expected_output_results_type")
+                        .HasDatabaseName("ix_interaction_expected_output_results_output_type");
 
                     b.ToTable("interaction_expected_output_results", "rule");
                 });
@@ -612,9 +629,11 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_jobs");
 
-                    b.HasIndex(new[] { "ProductId" }, "ix_jobs_product_id");
+                    b.HasIndex(new[] { "ProductId" }, "ix_jobs_product_id")
+                        .HasDatabaseName("ix_jobs_product_id");
 
-                    b.HasIndex(new[] { "ToolId" }, "ix_jobs_tool_id");
+                    b.HasIndex(new[] { "ToolId" }, "ix_jobs_tool_id")
+                        .HasDatabaseName("ix_jobs_tool_id");
 
                     b.ToTable("jobs", "job");
                 });
@@ -666,10 +685,12 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                         .HasName("organizations_pkey");
 
                     b.HasIndex(new[] { "Key" }, "organizations_key_key")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_organizations_key");
 
                     b.HasIndex(new[] { "Name" }, "organizations_name_key")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_organizations_name");
 
                     b.ToTable("organizations", "product");
                 });
@@ -724,26 +745,32 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("products_pkey");
 
-                    b.HasIndex(new[] { "ClientId" }, "idx_products_client_id");
+                    b.HasIndex(new[] { "ClientId" }, "idx_products_client_id")
+                        .HasDatabaseName("ix_products_client_id");
 
                     b.HasIndex(new[] { "Key", "ClientId" }, "products_key_client_id_key")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_products_key_client_id");
 
                     b.HasIndex(new[] { "Name", "ClientId" }, "products_name_client_id_key")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_products_name_client_id");
 
                     b.ToTable("products", "product");
                 });
 
             modelBuilder.Entity("AIMY.Db.Prototype.Infrastructure.Entities.ProductTool", b =>
                 {
-                    b.Property<int>("ProductId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("product_id");
+                        .HasColumnName("id");
 
-                    b.Property<int>("ToolId")
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ClientId")
                         .HasColumnType("integer")
-                        .HasColumnName("tool_id");
+                        .HasColumnName("client_id");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -756,6 +783,18 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("created_by");
 
+                    b.Property<int?>("OrganizationId")
+                        .HasColumnType("integer")
+                        .HasColumnName("organization_id");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("integer")
+                        .HasColumnName("product_id");
+
+                    b.Property<int>("ToolId")
+                        .HasColumnType("integer")
+                        .HasColumnName("tool_id");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
@@ -767,31 +806,36 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("updated_by");
 
-                    b.HasKey("ProductId", "ToolId")
-                        .HasName("pk_product_tool");
+                    b.HasKey("Id")
+                        .HasName("product_tool_pkey");
 
-                    b.HasIndex(new[] { "ToolId" }, "idx_product_tool_tool_id");
+                    b.HasIndex(new[] { "ClientId" }, "idx_product_tool_client_id")
+                        .HasDatabaseName("ix_product_tool_client_id");
+
+                    b.HasIndex(new[] { "OrganizationId" }, "idx_product_tool_organization_id")
+                        .HasDatabaseName("ix_product_tool_organization_id");
+
+                    b.HasIndex(new[] { "ProductId" }, "idx_product_tool_product_id")
+                        .HasDatabaseName("ix_product_tool_product_id");
+
+                    b.HasIndex(new[] { "ToolId" }, "idx_product_tool_tool_id")
+                        .HasDatabaseName("ix_product_tool_tool_id");
 
                     b.ToTable("product_tool", "product");
                 });
 
             modelBuilder.Entity("AIMY.Db.Prototype.Infrastructure.Entities.ProductUser", b =>
                 {
-                    b.Property<int>("OrganizationId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("organization_id");
+                        .HasColumnName("id");
 
-                    b.Property<int>("ClientId")
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ClientId")
                         .HasColumnType("integer")
                         .HasColumnName("client_id");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("integer")
-                        .HasColumnName("product_id");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer")
-                        .HasColumnName("user_id");
 
                     b.Property<DateTime?>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -804,6 +848,14 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("created_by");
 
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("integer")
+                        .HasColumnName("organization_id");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("integer")
+                        .HasColumnName("product_id");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
@@ -815,16 +867,24 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("updated_by");
 
-                    b.HasKey("OrganizationId", "ClientId", "ProductId", "UserId")
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
                         .HasName("product_user_pkey");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductId")
+                        .HasDatabaseName("ix_product_user_product_id");
 
-                    b.HasIndex(new[] { "ClientId" }, "idx_product_user_client_id");
+                    b.HasIndex(new[] { "ClientId" }, "idx_product_user_client_id")
+                        .HasDatabaseName("ix_product_user_client_id");
 
-                    b.HasIndex(new[] { "OrganizationId" }, "idx_product_user_organization_id");
+                    b.HasIndex(new[] { "OrganizationId" }, "idx_product_user_organization_id")
+                        .HasDatabaseName("ix_product_user_organization_id");
 
-                    b.HasIndex(new[] { "UserId" }, "idx_product_user_user_id");
+                    b.HasIndex(new[] { "UserId" }, "idx_product_user_user_id")
+                        .HasDatabaseName("ix_product_user_user_id");
 
                     b.ToTable("product_user", "product");
                 });
@@ -870,7 +930,8 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                         .HasName("roles_pkey");
 
                     b.HasIndex(new[] { "Name" }, "roles_name_key")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_roles_name");
 
                     b.ToTable("roles", "auth");
                 });
@@ -980,7 +1041,8 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("ticket_actions_pkey");
 
-                    b.HasIndex(new[] { "UserInteractionId" }, "idx_actions_user_interaction_id");
+                    b.HasIndex(new[] { "UserInteractionId" }, "idx_actions_user_interaction_id")
+                        .HasDatabaseName("ix_ticket_actions_user_interaction_id");
 
                     b.ToTable("ticket_actions", "interaction");
                 });
@@ -1016,7 +1078,8 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("ticket_history_pkey");
 
-                    b.HasIndex(new[] { "UserInteractionId" }, "IX_ticket_history_user_interaction_id");
+                    b.HasIndex(new[] { "UserInteractionId" }, "IX_ticket_history_user_interaction_id")
+                        .HasDatabaseName("ix_ticket_history_user_interaction_id");
 
                     b.ToTable("ticket_history", "interaction");
                 });
@@ -1087,12 +1150,8 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("tools_pkey");
 
-                    b.HasIndex(new[] { "AccessType" }, "idx_access_type");
-
-                    b.HasIndex(new[] { "ProductId" }, "idx_tools_product_id");
-
-                    b.HasIndex(new[] { "Name", "ProductId" }, "tools_name_product_id_key")
-                        .IsUnique();
+                    b.HasIndex(new[] { "AccessType" }, "idx_access_type")
+                        .HasDatabaseName("ix_tools_access_type");
 
                     b.ToTable("tools", "product");
                 });
@@ -1141,12 +1200,15 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("users_pkey");
 
-                    b.HasIndex(new[] { "Email" }, "idx_users_email");
+                    b.HasIndex(new[] { "Email" }, "idx_users_email")
+                        .HasDatabaseName("ix_users_email");
 
-                    b.HasIndex(new[] { "SupervisorId" }, "idx_users_supervisor_id");
+                    b.HasIndex(new[] { "SupervisorId" }, "idx_users_supervisor_id")
+                        .HasDatabaseName("ix_users_supervisor_id");
 
                     b.HasIndex(new[] { "Email" }, "users_email_key")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_users_email1");
 
                     b.ToTable("users", "auth");
                 });
@@ -1311,11 +1373,14 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("user_interactions_pkey");
 
-                    b.HasIndex(new[] { "AgentId" }, "idx_agent_id");
+                    b.HasIndex(new[] { "AgentId" }, "idx_agent_id")
+                        .HasDatabaseName("ix_user_interactions_agent_id");
 
-                    b.HasIndex(new[] { "InteractionType" }, "idx_interaction_type");
+                    b.HasIndex(new[] { "InteractionType" }, "idx_interaction_type")
+                        .HasDatabaseName("ix_user_interactions_interaction_type");
 
-                    b.HasIndex(new[] { "ToolId" }, "idx_tool_id");
+                    b.HasIndex(new[] { "ToolId" }, "idx_tool_id")
+                        .HasDatabaseName("ix_user_interactions_tool_id");
 
                     b.ToTable("user_interactions", "interaction");
                 });
@@ -1379,7 +1444,8 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("user_interaction_events_pkey");
 
-                    b.HasIndex(new[] { "UserInteractionId" }, "idx_user_interaction_events_interaction_id");
+                    b.HasIndex(new[] { "UserInteractionId" }, "idx_user_interaction_events_interaction_id")
+                        .HasDatabaseName("ix_user_interaction_events_user_interaction_id");
 
                     b.ToTable("user_interaction_events", "events");
                 });
@@ -1419,7 +1485,8 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                     b.HasKey("UserId", "RoleId")
                         .HasName("user_role_pkey");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("RoleId")
+                        .HasDatabaseName("ix_user_role_role_id");
 
                     b.ToTable("user_role", "auth");
                 });
@@ -1524,7 +1591,8 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                     b.HasKey("TicketId")
                         .HasName("zendesk_tickets_pkey");
 
-                    b.HasIndex("UserInteractionId");
+                    b.HasIndex("UserInteractionId")
+                        .HasDatabaseName("ix_zendesk_tickets_user_interaction_id");
 
                     b.ToTable("zendesk_tickets", "interaction");
                 });
@@ -1537,16 +1605,7 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("analysis_rules_analysis_rule_id_fkey");
 
-                    b.HasOne("AIMY.Db.Prototype.Infrastructure.Entities.Product", "Product")
-                        .WithMany("AnalysisRules")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_analysis_rules_products_product_id");
-
                     b.Navigation("AnalysisRuleNavigation");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("AIMY.Db.Prototype.Infrastructure.Entities.AnalysisRuleProduct", b =>
@@ -1556,14 +1615,14 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                         .HasForeignKey("AnalysisRuleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_analysis_rule_product_analysis_rules_analysis_rule_id");
+                        .HasConstraintName("analysis_rule_product_analysis_rule_id_fkey");
 
                     b.HasOne("AIMY.Db.Prototype.Infrastructure.Entities.Product", "Product")
                         .WithMany("AnalysisRuleProducts")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_analysis_rule_product_products_product_id");
+                        .HasConstraintName("analysis_rule_product_product_id_fkey");
 
                     b.Navigation("AnalysisRule");
 
@@ -1683,19 +1742,32 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
 
             modelBuilder.Entity("AIMY.Db.Prototype.Infrastructure.Entities.ProductTool", b =>
                 {
+                    b.HasOne("AIMY.Db.Prototype.Infrastructure.Entities.Client", "Client")
+                        .WithMany("ProductTools")
+                        .HasForeignKey("ClientId")
+                        .HasConstraintName("product_tool_client_id_fkey");
+
+                    b.HasOne("AIMY.Db.Prototype.Infrastructure.Entities.Organization", "Organization")
+                        .WithMany("ProductTools")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("product_tool_organization_id_fkey");
+
                     b.HasOne("AIMY.Db.Prototype.Infrastructure.Entities.Product", "Product")
                         .WithMany("ProductTools")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_product_tool_products_product_id");
+                        .HasConstraintName("product_tool_product_id_fkey");
 
                     b.HasOne("AIMY.Db.Prototype.Infrastructure.Entities.Tool", "Tool")
                         .WithMany("ProductTools")
                         .HasForeignKey("ToolId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_product_tool_tools_tool_id");
+                        .HasConstraintName("product_tool_tool_id_fkey");
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Organization");
 
                     b.Navigation("Product");
 
@@ -1707,20 +1779,18 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                     b.HasOne("AIMY.Db.Prototype.Infrastructure.Entities.Client", "Client")
                         .WithMany("ProductUsers")
                         .HasForeignKey("ClientId")
-                        .IsRequired()
-                        .HasConstraintName("fk_product_user_clients_client_id");
+                        .HasConstraintName("product_user_client_id_fkey");
 
                     b.HasOne("AIMY.Db.Prototype.Infrastructure.Entities.Organization", "Organization")
                         .WithMany("ProductUsers")
                         .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_product_user_organizations_organization_id");
+                        .HasConstraintName("product_user_organization_id_fkey");
 
                     b.HasOne("AIMY.Db.Prototype.Infrastructure.Entities.Product", "Product")
                         .WithMany("ProductUsers")
                         .HasForeignKey("ProductId")
-                        .IsRequired()
                         .HasConstraintName("product_user_product_id_fkey");
 
                     b.HasOne("AIMY.Db.Prototype.Infrastructure.Entities.User", "User")
@@ -1847,6 +1917,8 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
 
             modelBuilder.Entity("AIMY.Db.Prototype.Infrastructure.Entities.Client", b =>
                 {
+                    b.Navigation("ProductTools");
+
                     b.Navigation("ProductUsers");
 
                     b.Navigation("Products");
@@ -1861,14 +1933,14 @@ namespace AIMY.Db.Prototype.Infrastructure.Migrations
                 {
                     b.Navigation("Clients");
 
+                    b.Navigation("ProductTools");
+
                     b.Navigation("ProductUsers");
                 });
 
             modelBuilder.Entity("AIMY.Db.Prototype.Infrastructure.Entities.Product", b =>
                 {
                     b.Navigation("AnalysisRuleProducts");
-
-                    b.Navigation("AnalysisRules");
 
                     b.Navigation("Jobs");
 

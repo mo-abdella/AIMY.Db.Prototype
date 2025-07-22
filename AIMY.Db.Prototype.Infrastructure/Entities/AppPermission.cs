@@ -3,15 +3,19 @@ using System.Collections.Generic;
 
 namespace AIMY.Db.Prototype.Infrastructure.Entities;
 
-public partial class Role
+public partial class AppPermission
 {
     public int Id { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string PermissionName { get; set; } = null!;
 
-    public string Key { get; set; } = null!;
+    public string Resource { get; set; } = null!;
+
+    public string Action { get; set; } = null!;
 
     public int? AppId { get; set; }
+
+    public int? PermissionModuleId { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 
@@ -25,5 +29,5 @@ public partial class Role
 
     public virtual ICollection<AppRolesPermission> AppRolesPermissions { get; set; } = new List<AppRolesPermission>();
 
-    public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+    public virtual PermissionModule? PermissionModule { get; set; }
 }

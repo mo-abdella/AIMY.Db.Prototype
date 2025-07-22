@@ -3,17 +3,13 @@ using System.Collections.Generic;
 
 namespace AIMY.Db.Prototype.Infrastructure.Entities;
 
-public partial class UserRole
+public partial class UserApp
 {
     public int Id { get; set; }
 
     public int? UserId { get; set; }
 
     public int? AppId { get; set; }
-
-    public int? EntityValueId { get; set; }
-
-    public int? AppRoleId { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 
@@ -24,10 +20,6 @@ public partial class UserRole
     public int? UpdatedBy { get; set; }
 
     public virtual App? App { get; set; }
-
-    public virtual Role? AppRole { get; set; }
-
-    public virtual EntityValue? EntityValue { get; set; }
 
     public virtual User? User { get; set; }
 }

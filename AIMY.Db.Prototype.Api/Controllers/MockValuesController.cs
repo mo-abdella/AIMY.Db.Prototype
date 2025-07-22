@@ -22,38 +22,65 @@
 //            _contextFactory = contextFactory;
 //        }
 
+//        [HttpPost("TestCreateNewAnalysisWithExistingProducts")]
+//        public async Task<IActionResult> TestCreateNewAnalysisWithExistingProducts()
+//        {
+//            var products = await _context.Products
+//                .Include(p => p.AnalysisRuleProducts)
+//                .Where(a => a.AnalysisRuleProducts.Count == 0)
+//                .Where(p => p.Client.Organization.Key == "TEST_ORG")
+//                .ToListAsync();
+
+//            if (products.Count == 0)
+//            {
+//                return NotFound("No products found for the specified organization.");
+//            }
+
+//            var newAnalysisRule = AnalysisRule.GenerateWithProducts(products);
+
+//            //foreach (var product in products)
+//            //{
+//            //    product.AnalysisRuleProducts.Add(new() { AnalysisRule = newAnalysisRule, Product = product });
+//            //}
+//            await _context.AddAsync(newAnalysisRule);
+
+//            await _context.SaveChangesAsync();
+
+//            return Ok("New analysis rule added to existing products.");
+//        }
+
 //        [HttpPost("FixSentimentAnalysisScores")]
 //        public async Task<IActionResult> FixSentimentAnalysisScores()
 //        {
-//            var interactions = await _context.UserInteractions
-//                .Where(ui => ui.Tool.Product.Client.Organization.Key == "TEST_ORG")
-//                .Where(ui => ui.InteractionAnalysisRuleResults.Any(rr => rr.AnalysisRule.Type == "mistake_analysis" && rr.Type == "sentiment_analysis" && (rr.QaScore > 1 || rr.Score > 1)))
-//                .Include(ui => ui.InteractionAnalysisRuleResults)
-//                .ThenInclude(rr => rr.AnalysisRule)
-//                .ToListAsync();
+//            //var interactions = await _context.UserInteractions
+//            //    .Where(ui => ui.Tool.Client.Organization.Key == "TEST_ORG")
+//            //    .Where(ui => ui.InteractionAnalysisRuleResults.Any(rr => rr.AnalysisRule.Type == "mistake_analysis" && rr.Type == "sentiment_analysis" && (rr.QaScore > 1 || rr.Score > 1)))
+//            //    .Include(ui => ui.InteractionAnalysisRuleResults)
+//            //    .ThenInclude(rr => rr.AnalysisRule)
+//            //    .ToListAsync();
 
-//            foreach (var interaction in interactions)
-//            {
-//                interaction.Status = "Analyzed";
+//            //foreach (var interaction in interactions)
+//            //{
+//            //    interaction.Status = "Analyzed";
 
-//                foreach (var result in interaction.InteractionAnalysisRuleResults)
-//                {
-//                    result.Type = result.AnalysisRule.Type;
+//            //    foreach (var result in interaction.InteractionAnalysisRuleResults)
+//            //    {
+//            //        result.Type = result.AnalysisRule.Type;
 
-//                    if (result.Type == "sentiment_analysis" && (result.QaScore > 1 || result.Score > 1))
-//                    {
+//            //        if (result.Type == "sentiment_analysis" && (result.QaScore > 1 || result.Score > 1))
+//            //        {
 
-//                        if (result.QaScore > 1)
-//                            result.QaScore = 1;
+//            //            if (result.QaScore > 1)
+//            //                result.QaScore = 1;
 
-//                        if (result.Score > 1)
-//                            result.Score = 1;
-//                    }
+//            //            if (result.Score > 1)
+//            //                result.Score = 1;
+//            //        }
 
-//                }
-//            }
+//            //    }
+//            //}
 
-//            await _context.SaveChangesAsync();
+//            //await _context.SaveChangesAsync();
 
 //            return Ok("Sentiment analysis scores have been fixed.");
 //        }
@@ -75,7 +102,7 @@
 //            product.Name = "teamsupport";
 //            product.CreatedBy = "mo has something";
 //            product.UpdatedBy = "mo has something";
-//            product.Tools.Add(tool);
+//            product.ProductTools.Add(new ProductTool() { Tool = tool, Product = product });
 
 //            await _context.SaveChangesAsync();
 

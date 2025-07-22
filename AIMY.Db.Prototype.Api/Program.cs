@@ -1,30 +1,32 @@
-using AIMY.Db.Prototype.Infrastructure.Context;
-using Microsoft.EntityFrameworkCore;
-
+//using AIMY.Db.Prototype.Infrastructure.Context;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Configuration.AddSecretsManager(configurator: options =>
-{
-    options.SecretFilter = (secret) =>
-        secret.Name.Contains(value: builder.Configuration.GetValue<string>("SecretsManager:SecretName") ??
-                                    throw new InvalidOperationException());
-    // Add the section names without the secret name as the prefix
-    options.KeyGenerator = (l, s) => s.Substring(s.IndexOf(":", StringComparison.Ordinal) + 1);
-});
+//builder.Configuration.AddSecretsManager(configurator: options =>
+//{
+//    options.SecretFilter = (secret) =>
+//        secret.Name.Contains(value: builder.Configuration.GetValue<string>("SecretsManager:SecretName") ??
+//                                    throw new InvalidOperationException());
+//    // Add the section names without the secret name as the prefix
+//    options.KeyGenerator = (l, s) => s.Substring(s.IndexOf(":", StringComparison.Ordinal) + 1);
+//});
 
 
-builder.Services.AddDbContext<MyDbContext>(options =>
-{
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")).UseSnakeCaseNamingConvention();
-    //options.UseNpgsql(builder.Configuration.GetConnectionString("AWS")).UseSnakeCaseNamingConvention();
-});
+//builder.Services.AddDbContext<MyDbContext>(options =>
+//{
+//    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")).UseSnakeCaseNamingConvention();
+//    //options.UseNpgsql(builder.Configuration.GetConnectionString("AWS")).UseSnakeCaseNamingConvention();
+//    options.LogTo(Console.WriteLine);
+//    options.EnableSensitiveDataLogging();
+//});
 
-builder.Services.AddDbContextFactory<MyDbContext>(options =>
-{
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")).UseSnakeCaseNamingConvention();
-    //options.UseNpgsql(builder.Configuration.GetConnectionString("AWS")).UseSnakeCaseNamingConvention();
-},ServiceLifetime.Scoped);
+//builder.Services.AddDbContextFactory<MyDbContext>(options =>
+//{
+//    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")).UseSnakeCaseNamingConvention();
+//    //options.UseNpgsql(builder.Configuration.GetConnectionString("AWS")).UseSnakeCaseNamingConvention();
+//    options.LogTo(Console.WriteLine);
+//    options.EnableSensitiveDataLogging();
+//}, ServiceLifetime.Scoped);
 
 
 builder.Services.AddControllers();

@@ -9,8 +9,6 @@ public partial class UserRole
 
     public Guid? UserId { get; set; }
 
-    public Guid? AppId { get; set; }
-
     public Guid? EntityValueId { get; set; }
 
     public Guid? AppRoleId { get; set; }
@@ -22,6 +20,8 @@ public partial class UserRole
     public Guid? CreatedBy { get; set; }
 
     public Guid? UpdatedBy { get; set; }
+
+    public Guid? AppId { get; set; }
 
     public virtual App? App { get; set; }
 

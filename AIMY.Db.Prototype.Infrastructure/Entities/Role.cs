@@ -11,8 +11,6 @@ public partial class Role
 
     public string Key { get; set; } = null!;
 
-    public Guid? AppId { get; set; }
-
     public DateTime? CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
@@ -22,8 +20,6 @@ public partial class Role
     public Guid? UpdatedBy { get; set; }
 
     public bool IsSystemRole { get; set; }
-
-    public virtual App? App { get; set; }
 
     public virtual ICollection<AppRolesPermission> AppRolesPermissions { get; set; } = new List<AppRolesPermission>();
 

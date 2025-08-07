@@ -73,6 +73,9 @@ public partial class MyDbContext : DbContext
                 .HasDefaultValueSql("now()")
                 .HasColumnName("updated_at");
             entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
+            entity.Property(e => e.Url)
+                .HasDefaultValueSql("''::text")
+                .HasColumnName("url");
         });
 
         modelBuilder.Entity<AppPermission>(entity =>
@@ -292,12 +295,9 @@ public partial class MyDbContext : DbContext
 
             entity.ToTable("roles", "role");
 
-            entity.HasIndex(e => e.AppId, "idx_roles_app_id");
-
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("id");
-            entity.Property(e => e.AppId).HasColumnName("app_id");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("now()")
                 .HasColumnName("created_at");
@@ -315,10 +315,6 @@ public partial class MyDbContext : DbContext
                 .HasDefaultValueSql("now()")
                 .HasColumnName("updated_at");
             entity.Property(e => e.UpdatedBy).HasColumnName("updated_by");
-
-            entity.HasOne(d => d.App).WithMany(p => p.Roles)
-                .HasForeignKey(d => d.AppId)
-                .HasConstraintName("roles_app_id_fkey");
         });
 
         modelBuilder.Entity<User>(entity =>

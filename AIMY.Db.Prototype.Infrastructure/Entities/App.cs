@@ -19,13 +19,13 @@ public partial class App
 
     public string Key { get; set; } = null!;
 
+    public string Url { get; set; } = null!;
+
     public virtual ICollection<AppPermission> AppPermissions { get; set; } = new List<AppPermission>();
 
     public virtual ICollection<Entity> Entities { get; set; } = new List<Entity>();
 
     public virtual ICollection<PermissionModule> PermissionModules { get; set; } = new List<PermissionModule>();
-
-    public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
 
     public virtual ICollection<UserApp> UserApps { get; set; } = new List<UserApp>();
 

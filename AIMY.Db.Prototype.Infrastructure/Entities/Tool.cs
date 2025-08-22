@@ -23,8 +23,6 @@ public partial class Tool
 
     public byte[]? ApiSecret { get; set; }
 
-    public int ProductId { get; set; }
-
     public string AccessType { get; set; } = null!;
 
     public virtual ICollection<Job> Jobs { get; set; } = new List<Job>();

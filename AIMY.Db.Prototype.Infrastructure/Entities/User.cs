@@ -19,6 +19,8 @@ public partial class User
 
     public int? SupervisorId { get; set; }
 
+    public string? Name { get; set; }
+
     public virtual ICollection<User> InverseSupervisor { get; set; } = new List<User>();
 
     public virtual ICollection<ProductUser> ProductUsers { get; set; } = new List<ProductUser>();

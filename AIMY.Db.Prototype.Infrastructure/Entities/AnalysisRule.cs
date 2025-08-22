@@ -23,11 +23,13 @@ public partial class AnalysisRule
 
     public string? Type { get; set; }
 
-    public int ProductId { get; set; }
-
     public int? AnalysisRuleId { get; set; }
 
     public string? RuleInteractionType { get; set; }
+
+    public DateTime? DeletedAt { get; set; }
+
+    public bool? IsAutoFail { get; set; }
 
     public virtual AnalysisRule? AnalysisRuleNavigation { get; set; }
 

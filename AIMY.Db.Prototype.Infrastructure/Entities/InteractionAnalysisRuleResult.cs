@@ -29,6 +29,8 @@ public partial class InteractionAnalysisRuleResult
 
     public string? Reason { get; set; }
 
+    public string? ManualReason { get; set; }
+
     public virtual AnalysisRule AnalysisRule { get; set; } = null!;
 
     public virtual UserInteraction UserInteraction { get; set; } = null!;

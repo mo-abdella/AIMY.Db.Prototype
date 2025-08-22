@@ -80,8 +80,6 @@ public partial class MyDbContext : DbContext
 
             entity.HasIndex(e => e.Name, "idx_analysis_rules_name");
 
-            entity.HasIndex(e => e.ProductId, "idx_analysis_rules_product_id");
-
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.AnalysisRuleId).HasColumnName("analysis_rule_id");
             entity.Property(e => e.CreatedAt)
@@ -90,13 +88,16 @@ public partial class MyDbContext : DbContext
             entity.Property(e => e.CreatedBy)
                 .HasMaxLength(255)
                 .HasColumnName("created_by");
+            entity.Property(e => e.DeletedAt).HasColumnName("deleted_at");
             entity.Property(e => e.Description)
                 .HasMaxLength(5000)
                 .HasColumnName("description");
+            entity.Property(e => e.IsAutoFail)
+                .HasDefaultValue(false)
+                .HasColumnName("is_auto_fail");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
                 .HasColumnName("name");
-            entity.Property(e => e.ProductId).HasColumnName("product_id");
             entity.Property(e => e.RuleInteractionType)
                 .HasMaxLength(50)
                 .HasColumnName("rule_interaction_type");
@@ -322,6 +323,7 @@ public partial class MyDbContext : DbContext
             entity.Property(e => e.CreatedBy)
                 .HasMaxLength(255)
                 .HasColumnName("created_by");
+            entity.Property(e => e.ManualReason).HasColumnName("manual_reason");
             entity.Property(e => e.QaReview)
                 .HasMaxLength(255)
                 .HasColumnName("qa_review");
@@ -774,7 +776,6 @@ public partial class MyDbContext : DbContext
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
                 .HasColumnName("name");
-            entity.Property(e => e.ProductId).HasColumnName("product_id");
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("now()")
                 .HasColumnType("timestamp without time zone")
@@ -795,6 +796,8 @@ public partial class MyDbContext : DbContext
 
             entity.HasIndex(e => e.Email, "idx_users_email");
 
+            entity.HasIndex(e => e.Name, "idx_users_name");
+
             entity.HasIndex(e => e.SupervisorId, "idx_users_supervisor_id");
 
             entity.HasIndex(e => e.Email, "users_email_key").IsUnique();
@@ -809,6 +812,9 @@ public partial class MyDbContext : DbContext
             entity.Property(e => e.Email)
                 .HasMaxLength(255)
                 .HasColumnName("email");
+            entity.Property(e => e.Name)
+                .HasMaxLength(255)
+                .HasColumnName("name");
             entity.Property(e => e.SupervisorId).HasColumnName("supervisor_id");
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("now()")
@@ -832,6 +838,10 @@ public partial class MyDbContext : DbContext
 
             entity.HasIndex(e => e.InteractionType, "idx_interaction_type");
 
+            entity.HasIndex(e => e.ProductId, "idx_product_id");
+
+            entity.HasIndex(e => e.SatisfactionScore, "idx_satisfaction_score");
+
             entity.HasIndex(e => e.ToolId, "idx_tool_id");
 
             entity.Property(e => e.Id).HasColumnName("id");
@@ -839,6 +849,9 @@ public partial class MyDbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("agent_email");
             entity.Property(e => e.AgentId).HasColumnName("agent_id");
+            entity.Property(e => e.AgentName)
+                .HasMaxLength(255)
+                .HasColumnName("agent_name");
             entity.Property(e => e.CallDirection)
                 .HasMaxLength(50)
                 .HasColumnName("call_direction");
@@ -855,6 +868,7 @@ public partial class MyDbContext : DbContext
             entity.Property(e => e.ExternalId)
                 .HasMaxLength(255)
                 .HasColumnName("external_id");
+            entity.Property(e => e.ExternalInteractionUrl).HasColumnName("external_interaction_url");
             entity.Property(e => e.ExternalStatus)
                 .HasMaxLength(255)
                 .HasDefaultValueSql("''::character varying")
@@ -863,12 +877,18 @@ public partial class MyDbContext : DbContext
             entity.Property(e => e.InteractionType)
                 .HasMaxLength(50)
                 .HasColumnName("interaction_type");
+            entity.Property(e => e.InteractionUrl).HasColumnName("interaction_url");
             entity.Property(e => e.MistakeAnalysisScoreAi)
                 .HasPrecision(4, 2)
                 .HasColumnName("mistake_analysis_score_ai");
             entity.Property(e => e.MistakeAnalysisScoreQa)
                 .HasPrecision(4, 2)
                 .HasColumnName("mistake_analysis_score_qa");
+            entity.Property(e => e.OtherParty).HasColumnName("other_party");
+            entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.SatisfactionScore)
+                .HasMaxLength(255)
+                .HasColumnName("satisfaction_score");
             entity.Property(e => e.SemanticAnalysisAi)
                 .HasMaxLength(5000)
                 .HasColumnName("semantic_analysis_ai");
@@ -908,6 +928,11 @@ public partial class MyDbContext : DbContext
             entity.Property(e => e.UpdatedBy)
                 .HasMaxLength(255)
                 .HasColumnName("updated_by");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.UserInteractions)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("user_interactions_product_id_fkey");
 
             entity.HasOne(d => d.Tool).WithMany(p => p.UserInteractions)
                 .HasForeignKey(d => d.ToolId)
@@ -995,6 +1020,9 @@ public partial class MyDbContext : DbContext
             entity.Property(e => e.TicketId)
                 .ValueGeneratedNever()
                 .HasColumnName("ticket_id");
+            entity.Property(e => e.ArticleId)
+                .HasMaxLength(150)
+                .HasColumnName("article_id");
             entity.Property(e => e.Assignee).HasColumnName("assignee");
             entity.Property(e => e.Channel).HasColumnName("channel");
             entity.Property(e => e.CreatedAt)
@@ -1010,9 +1038,13 @@ public partial class MyDbContext : DbContext
             entity.Property(e => e.InternalStatus).HasColumnName("internal_status");
             entity.Property(e => e.JiraTicketId).HasColumnName("jira_ticket_id");
             entity.Property(e => e.OrganizationId).HasColumnName("organization_id");
+            entity.Property(e => e.OrganizationName)
+                .HasMaxLength(150)
+                .HasColumnName("organization_name");
             entity.Property(e => e.Priority).HasColumnName("priority");
             entity.Property(e => e.PublicStatus).HasColumnName("public_status");
             entity.Property(e => e.RequesterId).HasColumnName("requester_id");
+            entity.Property(e => e.ResolutionSummary).HasColumnName("resolution_summary");
             entity.Property(e => e.Subject).HasColumnName("subject");
             entity.Property(e => e.SubmitterId).HasColumnName("submitter_id");
             entity.Property(e => e.Tags).HasColumnName("tags");

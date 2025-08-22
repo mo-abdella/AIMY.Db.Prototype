@@ -67,6 +67,18 @@ public partial class UserInteraction
 
     public string? ExternalId { get; set; }
 
+    public string? AgentName { get; set; }
+
+    public int ProductId { get; set; }
+
+    public string? SatisfactionScore { get; set; }
+
+    public string? OtherParty { get; set; }
+
+    public string? ExternalInteractionUrl { get; set; }
+
+    public string? InteractionUrl { get; set; }
+
     public virtual ICollection<ChatMessage> ChatMessages { get; set; } = new List<ChatMessage>();
 
     public virtual ICollection<InteractionAnalysisRuleResult> InteractionAnalysisRuleResults { get; set; } = new List<InteractionAnalysisRuleResult>();
@@ -74,6 +86,8 @@ public partial class UserInteraction
     public virtual ICollection<InteractionExpectedOutputResult> InteractionExpectedOutputResults { get; set; } = new List<InteractionExpectedOutputResult>();
 
     public virtual InteractionReport? InteractionReport { get; set; }
+
+    public virtual Product Product { get; set; } = null!;
 
     public virtual TeamSupportTicket? TeamSupportTicket { get; set; }
 

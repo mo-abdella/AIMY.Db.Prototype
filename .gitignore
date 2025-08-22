@@ -362,3 +362,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /AIMY.Db.Prototype.Api/appsettings.json
+/AIMY.Db.Prototype.Api/.idea/.idea.AIMY.Db.Prototype/.idea

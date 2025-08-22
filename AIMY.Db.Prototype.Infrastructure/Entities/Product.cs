@@ -30,4 +30,6 @@ public partial class Product
     public virtual ICollection<ProductTool> ProductTools { get; set; } = new List<ProductTool>();
 
     public virtual ICollection<ProductUser> ProductUsers { get; set; } = new List<ProductUser>();
+
+    public virtual ICollection<UserInteraction> UserInteractions { get; set; } = new List<UserInteraction>();
 }

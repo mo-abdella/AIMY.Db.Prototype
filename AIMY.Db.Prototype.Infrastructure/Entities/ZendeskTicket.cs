@@ -49,5 +49,11 @@ public partial class ZendeskTicket
 
     public int? UserInteractionId { get; set; }
 
+    public string? ArticleId { get; set; }
+
+    public string? OrganizationName { get; set; }
+
+    public string? ResolutionSummary { get; set; }
+
     public virtual UserInteraction? UserInteraction { get; set; }
 }

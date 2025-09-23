@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace AIMY.Db.Prototype.Infrastructure.Entities;
+﻿namespace AIMY.Db.Prototype.Infrastructure.Entities;
 
 public partial class UserInteractionEvent
 {

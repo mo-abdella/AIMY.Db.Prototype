@@ -7,7 +7,7 @@ using Bogus;
 using AIMY.Db.Prototype.Infrastructure.Context;
 using AIMY.Db.Prototype.Infrastructure.Entities;
 
-namespace AimyPrototype.Controllers
+namespace AIMY.Db.Prototype.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -87,12 +87,6 @@ namespace AimyPrototype.Controllers
         public async Task<IActionResult> SeedZendesk()
         {
             var allTool = await _context.Tools.ToListAsync();
-            //var userInteraction = await _context.UserInteractions.FirstOrDefaultAsync(ui => ui.Id == 611);
-
-            //userInteraction.TicketNumber = "1727221";
-
-            //userInteraction.ToolId = 2;
-            //var tool = await _context.Tools.FirstOrDefaultAsync(t => t.Id == 2);
 
             var tool = new Tool();
 
@@ -598,11 +592,11 @@ public static class TicketRuleResultSeeder
 
         if (ruleResult.Type == "sentiment_analysis")
         {
-            commentResult = ruleResult.QaScore != null ? (ruleResult.QaScore == rule.Weight ? new Faker().PickRandomParam("Positive", "Neutral") : "Negative") : null;
+            commentResult = ruleResult.QaScore != null ? ruleResult.QaScore == rule.Weight ? new Faker().PickRandomParam("Positive", "Neutral") : "Negative" : null;
         }
         else
         {
-            commentResult = ruleResult.QaScore != null ? (ruleResult.QaScore == rule.Weight ? "Pass" : "Fail") : null;
+            commentResult = ruleResult.QaScore != null ? ruleResult.QaScore == rule.Weight ? "Pass" : "Fail" : null;
         }
 
         if (commentResult != null)
@@ -610,7 +604,7 @@ public static class TicketRuleResultSeeder
             ruleResult.Comment = RuleResultCommentGenerator.GetRandomComment(ruleResult.Type, commentResult);
         }
 
-        ruleResult.QaReview = ruleResult.QaScore != null ? (ruleResult.Score == ruleResult.QaScore ? new Faker().PickRandomParam("Agree", "Neutral") : new Faker().PickRandomParam("Disagree", "Neutral")) : null;
+        ruleResult.QaReview = ruleResult.QaScore != null ? ruleResult.Score == ruleResult.QaScore ? new Faker().PickRandomParam("Agree", "Neutral") : new Faker().PickRandomParam("Disagree", "Neutral") : null;
 
         return ruleResult;
     }

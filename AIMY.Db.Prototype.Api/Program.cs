@@ -1,5 +1,7 @@
 using AIMY.Db.Prototype.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
+using AIMY.Db.Prototype.Api.Configuration;
+using AIMY.Db.Prototype.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,13 @@ builder.Configuration.AddSecretsManager(configurator: options =>
     // Add the section names without the secret name as the prefix
     options.KeyGenerator = (l, s) => s.Substring(s.IndexOf(":", StringComparison.Ordinal) + 1);
 });
+
+// Configure AWS KMS options
+builder.Services.Configure<AwsKmsOptions>(
+    builder.Configuration.GetSection(AwsKmsOptions.SectionName));
+
+// Register AWS KMS service
+builder.Services.AddScoped<IAwsKmsService, AwsKmsService>();
 
 builder.Services.AddDbContext<MyDbContext>(options =>
 {

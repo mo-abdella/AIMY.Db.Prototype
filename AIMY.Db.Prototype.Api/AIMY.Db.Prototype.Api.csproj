@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Users\brent.shierklennar.com\code\tf-infra\template-terraform-infra-config\.github\scripts\generate_terraform_config.py" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AWSSDK.Core" Version="4.0.0.24" />
     <PackageReference Include="AWSSDK.KeyManagementService" Version="4.0.3.14" />
     <PackageReference Include="Bogus" Version="35.6.3" />

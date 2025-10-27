@@ -21,6 +21,8 @@ public partial class EntityValue
 
     public Guid? UpdatedBy { get; set; }
 
+    public string? ExternalId { get; set; }
+
     public virtual Entity? Entity { get; set; }
 
     public virtual ICollection<EntityValue> InverseParent { get; set; } = new List<EntityValue>();

@@ -171,6 +171,9 @@ public partial class MyDbContext : DbContext
                 .HasDefaultValueSql("now()")
                 .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.IsExclusive)
+                .HasDefaultValue(false)
+                .HasColumnName("is_exclusive");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .HasColumnName("name");
@@ -207,6 +210,7 @@ public partial class MyDbContext : DbContext
                 .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.EntityId).HasColumnName("entity_id");
+            entity.Property(e => e.ExternalId).HasColumnName("external_id");
             entity.Property(e => e.ParentId).HasColumnName("parent_id");
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("now()")

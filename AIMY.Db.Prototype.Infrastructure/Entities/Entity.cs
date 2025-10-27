@@ -21,6 +21,8 @@ public partial class Entity
 
     public Guid? UpdatedBy { get; set; }
 
+    public bool? IsExclusive { get; set; }
+
     public virtual App? App { get; set; }
 
     public virtual ICollection<EntityValue> EntityValues { get; set; } = new List<EntityValue>();

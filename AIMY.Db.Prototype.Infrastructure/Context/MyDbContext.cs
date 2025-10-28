@@ -62,8 +62,14 @@ public partial class MyDbContext : DbContext
 
     public virtual DbSet<ZendeskTicket> ZendeskTickets { get; set; }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseNpgsql("Host=aimyqa-postgresql-db.cbyoe2mso07i.us-east-2.rds.amazonaws.com;Database=aimyqa;Username=postgres;Password=QyfAY9wApwxBFh;Port=5432");
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.HasPostgresExtension("pg_trgm");
+
         modelBuilder.Entity<AnalysisRule>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("analysis_rules_pkey");
@@ -830,6 +836,10 @@ public partial class MyDbContext : DbContext
 
             entity.HasIndex(e => e.AgentId, "idx_agent_id");
 
+            entity.HasIndex(e => e.AgentName, "idx_agent_name_trgm")
+                .HasMethod("gin")
+                .HasOperators(new[] { "gin_trgm_ops" });
+
             entity.HasIndex(e => e.InteractionType, "idx_interaction_type");
 
             entity.HasIndex(e => e.ProductId, "idx_product_id");
@@ -899,6 +909,9 @@ public partial class MyDbContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("status");
             entity.Property(e => e.TextContent).HasColumnName("text_content");
+            entity.Property(e => e.TicketClosedPriority)
+                .HasMaxLength(100)
+                .HasColumnName("ticket_closed_priority");
             entity.Property(e => e.TicketDescription).HasColumnName("ticket_description");
             entity.Property(e => e.TicketGroup)
                 .HasMaxLength(255)
@@ -907,6 +920,9 @@ public partial class MyDbContext : DbContext
             entity.Property(e => e.TicketNumber)
                 .HasMaxLength(255)
                 .HasColumnName("ticket_number");
+            entity.Property(e => e.TicketSubmittedPriority)
+                .HasMaxLength(100)
+                .HasColumnName("ticket_submitted_priority");
             entity.Property(e => e.TicketTags).HasColumnName("ticket_tags");
             entity.Property(e => e.TicketTitle)
                 .HasMaxLength(255)
@@ -1038,6 +1054,7 @@ public partial class MyDbContext : DbContext
             entity.Property(e => e.Priority).HasColumnName("priority");
             entity.Property(e => e.PublicStatus).HasColumnName("public_status");
             entity.Property(e => e.RequesterId).HasColumnName("requester_id");
+            entity.Property(e => e.RequesterName).HasColumnName("requester_name");
             entity.Property(e => e.ResolutionSummary).HasColumnName("resolution_summary");
             entity.Property(e => e.Subject).HasColumnName("subject");
             entity.Property(e => e.SubmitterId).HasColumnName("submitter_id");

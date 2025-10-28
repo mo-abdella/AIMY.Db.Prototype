@@ -52,5 +52,7 @@ public partial class ZendeskTicket
 
     public string? ResolutionSummary { get; set; }
 
+    public string? RequesterName { get; set; }
+
     public virtual UserInteraction? UserInteraction { get; set; }
 }

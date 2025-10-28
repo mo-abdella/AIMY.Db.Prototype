@@ -76,6 +76,10 @@ public partial class UserInteraction
 
     public string? InteractionUrl { get; set; }
 
+    public string? TicketSubmittedPriority { get; set; }
+
+    public string? TicketClosedPriority { get; set; }
+
     public virtual ICollection<ChatMessage> ChatMessages { get; set; } = new List<ChatMessage>();
 
     public virtual ICollection<InteractionAnalysisRuleResult> InteractionAnalysisRuleResults { get; set; } = new List<InteractionAnalysisRuleResult>();
